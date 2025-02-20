@@ -27,7 +27,18 @@ async function run() {
     // // Send a ping to confirm a successful connection
 
     const tasksCollection = client.db("TaskManagement").collection("tasks");
-    
+    app.get('/tasks', async (req, res) => {
+        const result = await tasksCollection.find().toArray();
+        res.send(result)
+      })
+      // post task
+      app.post('/tasks', async (req, res) => {
+        const tasks = req.body;
+        console.log(tasks);
+        const result = await tasksCollection.insertOne(tasks);
+        res.send(result);
+      })
+      
 
     // await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
