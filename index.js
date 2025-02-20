@@ -38,7 +38,67 @@ async function run() {
         const result = await tasksCollection.insertOne(tasks);
         res.send(result);
       })
-      
+
+      app.get("/tasks/:id", async (req, res) => {
+        const id = req.params.id
+        const query = { _id: new ObjectId(id) }
+        const result = await tasksCollection.findOne(query)
+        res.send(result)
+      })
+  
+      // update task
+      app.put('/tasks/:id', async (req, res) => {
+        const id = req.params.id;
+        const filter = { _id: new ObjectId(id) }
+        const options = { upsert: true };
+        const updatedTask = req.body;
+        const posts = {
+          $set: {
+            title: updatedTask.title,
+            description: updatedTask.description,
+            deadline: updatedTask.deadline,
+            priority: updatedTask.priority,
+            email: updatedTask.email
+          }
+        }
+        const result = await tasksCollection.updateOne(filter, posts, options);
+        res.send(result);
+      })
+  
+      // delete task 
+      app.delete('/tasks/:id', async (req, res) => {
+        const id = req.params.id;
+        const query = { _id: new ObjectId(id) }
+        const result = await tasksCollection.deleteOne(query);
+        res.send(result);
+      })
+  
+      // task ongoing
+      app.patch("/tasks/ongoing/:id", async (req, res) => {
+        const id = req.params.id;
+        const filter = { _id: new ObjectId(id) };
+        const updatedDoc = {
+          $set: {
+            status: "Ongoing",
+          },
+        };
+        const result = await tasksCollection.updateOne(filter, updatedDoc);
+        res.send(result);
+      });
+  
+      // task complete
+      app.patch("/tasks/complete/:id", async (req, res) => {
+        const id = req.params.id;
+        const filter = { _id: new ObjectId(id) };
+        const updatedDoc = {
+          $set: {
+            status: "Completed",
+          },
+        };
+        const result = await tasksCollection.updateOne(filter, updatedDoc);
+        res.send(result);
+      });
+
 
     // await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
