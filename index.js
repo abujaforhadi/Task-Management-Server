@@ -43,11 +43,14 @@ async function run() {
       })
 
       app.get("/tasks/:id", async (req, res) => {
-        const id = req.params.id
+        const id = req.params.id;
+        console.log("Fetching Task ID:", id);  // Debugging
         const query = { _id: new ObjectId(id) }
-        const result = await tasksCollection.findOne(query)
-        res.send(result)
-      })
+        const result = await tasksCollection.findOne(query);
+        console.log("Task Found:", result);  // Debugging
+        res.send(result);
+    });
+    
 
       // app.post("user")
   
