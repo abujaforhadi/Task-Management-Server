@@ -22,16 +22,48 @@ const client = new MongoClient(uri, {
 
 async function run() {
   try {
+    
     // Connect the client to the server	(optional starting in v4.7)
     // await client.connect();
     // // Send a ping to confirm a successful connection
 
     const tasksCollection = client.db("TaskManagement").collection("tasks");
+    const userCollection = client.db("TaskManagement").collection("user");
     app.get('/tasks', async (req, res) => {
         const result = await tasksCollection.find().toArray();
         res.send(result)
       })
-      // post task
+      
+      app.post("/users", async (req, res) => {
+        const { email, displayName, photoURL } = req.body;
+        try {
+          const existingUser = await UserCollection.findOne({ email });
+          if (existingUser) {
+            return res.status(409).json({ message: "User already exists" });
+          }
+          const result = await UserCollection.insertOne({
+            email,
+            displayName,
+            photoURL,
+            role: "customer",
+          });
+          res.json({ message: "User created successfully", result });
+        } catch (error) {
+          res.status(500).json({ error: "Error creating user" });
+        }
+      });
+      app.get("/oneuser", async (req, res) => {
+        const email = req.query.email;
+        try {
+          const user = await UserCollection.findOne({ email });
+          if (!user) {
+            return res.status(404).json({ message: "User not found" });
+          }
+          res.json(user);
+        } catch (error) {
+          res.status(500).json({ error: "Error fetching user" });
+        }
+      });
       app.post('/tasks', async (req, res) => {
         const tasks = req.body;
         console.log(tasks);
@@ -45,6 +77,8 @@ async function run() {
         const result = await tasksCollection.findOne(query)
         res.send(result)
       })
+
+      // app.post("user")
   
       // update task
       app.put('/tasks/:id', async (req, res) => {
