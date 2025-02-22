@@ -19,7 +19,7 @@ const client = new MongoClient(uri, {
   }
 });
 
-async function run() {
+ function run() {
   try {
     
     // Connect the client to the server	(optional starting in v4.7)
@@ -27,7 +27,7 @@ async function run() {
     // // Send a ping to confirm a successful connection
 
     const tasksCollection = client.db("TaskManagement").collection("tasks");
-    const userCollection = client.db("TaskManagement").collection("user");
+    // const userCollection = client.db("TaskManagement").collection("user");
     app.get('/tasks', async (req, res) => {
         const result = await tasksCollection.find().toArray();
         res.send(result)
@@ -43,10 +43,10 @@ async function run() {
 
       app.get("/tasks/:id", async (req, res) => {
         const id = req.params.id;
-        // console.log("Fetching Task ID:", id);  // Debugging
+        // console.log("Fetching Task ID:", id); 
         const query = { _id: new ObjectId(id) }
         const result = await tasksCollection.findOne(query);
-        // console.log("Task Found:", result);  // Debugging
+        // console.log("Task Found:", result); 
         res.send(result);
     });
     
