@@ -2,7 +2,7 @@ const express = require('express')
 const cors = require('cors')
 require('dotenv').config()
 const app = express()
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 8080;
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
 app.use(cors());
@@ -11,6 +11,7 @@ app.use(express.json());
 
 const uri = process.env.url;
 
+// Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
   serverApi: {
     version: ServerApiVersion.v1,
@@ -19,7 +20,7 @@ const client = new MongoClient(uri, {
   }
 });
 
- function run() {
+async function run() {
   try {
     
     // Connect the client to the server	(optional starting in v4.7)
@@ -43,10 +44,10 @@ const client = new MongoClient(uri, {
 
       app.get("/tasks/:id", async (req, res) => {
         const id = req.params.id;
-        // console.log("Fetching Task ID:", id); 
+        // console.log("Fetching Task ID:", id);  // Debugging
         const query = { _id: new ObjectId(id) }
         const result = await tasksCollection.findOne(query);
-        // console.log("Task Found:", result); 
+        // console.log("Task Found:", result);  // Debugging
         res.send(result);
     });
     
